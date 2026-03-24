@@ -420,6 +420,10 @@ function buildMultTags(bet){
 // ── hole render ───────────────────────────────────────────
 function renderHole(){
   const h=H();
+  // If banker was auto-set from previous hole but bets not yet initialized
+  if(h.banker && h.bets.length===0){
+    h.bets=G.players.filter(p=>p.n!==h.banker).map(p=>({player:p.n,base:null,playerPressed:false,bankerPressed:false,playerScore:null}));
+  }
   document.getElementById('h-label').textContent=`Hole ${h.n}`;
   document.getElementById('h-par').textContent=`Par ${p3()?3:4}`;
   document.getElementById('h-par3-badge').style.display=p3()?'inline-block':'none';
@@ -432,6 +436,7 @@ function renderHole(){
   document.getElementById('sec-banker-sel').style.display=h.banker?'none':'block';
   document.getElementById('sec-maxbet').style.display=(h.banker&&!h.done)?'block':'none';
   if(h.maxBet)document.getElementById('inp-maxbet').value=h.maxBet;
+  else document.getElementById('inp-maxbet').value='';
   if(!h.banker)renderBankerGrid();
   renderBetCards();renderBankerPressSection();renderBankerScoreSection();renderScoreSection();updateCompleteBtn();
 }
