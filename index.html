@@ -9,301 +9,295 @@
 <title>Banker Golf</title>
 <style>
   :root {
-    --bg: #ffffff; --bg2: #f5f5f4; --bg3: #eeece9;
-    --text: #1a1a18; --text2: #6b6b67; --text3: #a0a09b;
-    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
-    --success: #3B6D11; --danger: #A32D2D; --warning-bg: #FAEEDA; --warning-text: #854F0B; --warning-border: #EF9F27;
-    --info-bg: #E6F1FB; --info-text: #185FA5;
-    --radius: 8px; --radius-lg: 12px;
+    --bg:#ffffff;--bg2:#f5f5f4;--bg3:#eeece9;
+    --text:#1a1a18;--text2:#6b6b67;--text3:#a0a09b;
+    --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+    --success:#3B6D11;--danger:#A32D2D;
+    --warning-bg:#FAEEDA;--warning-text:#854F0B;--warning-border:#EF9F27;
+    --info-bg:#E6F1FB;--info-text:#185FA5;
+    --radius:8px;--radius-lg:12px;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1c1c1a; --bg2: #252523; --bg3: #2e2e2b;
-      --text: #f0ede8; --text2: #a0a09b; --text3: #6b6b67;
-      --border: rgba(255,255,255,0.12); --border2: rgba(255,255,255,0.22);
-      --success: #97C459; --danger: #F09595; --warning-bg: #2e2410; --warning-text: #FAC775; --warning-border: #854F0B;
-      --info-bg: #0c2540; --info-text: #85B7EB;
+  @media(prefers-color-scheme:dark){
+    :root{
+      --bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;
+      --text:#f0ede8;--text2:#a0a09b;--text3:#6b6b67;
+      --border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.22);
+      --success:#97C459;--danger:#F09595;
+      --warning-bg:#2e2410;--warning-text:#FAC775;--warning-border:#854F0B;
+      --info-bg:#0c2540;--info-text:#85B7EB;
     }
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
-  .app { max-width: 480px; margin: 0 auto; background: var(--bg); min-height: 100vh; padding: 0 0 90px; }
-  .screen { display: none; }
-  .screen.active { display: block; }
-  .header { padding: 18px 16px 12px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; gap: 10px; background: var(--bg); }
-  .header h1 { font-size: 20px; font-weight: 600; }
-  .header-sub { font-size: 13px; color: var(--text2); }
-  .back-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text2); padding: 4px 8px 4px 0; }
-  .section { padding: 16px; }
-  .section + .section { border-top: 0.5px solid var(--border); }
-  label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 6px; }
-  input[type=text], input[type=number] {
-    width: 100%; padding: 10px 12px; border: 0.5px solid var(--border); border-radius: var(--radius);
-    background: var(--bg); color: var(--text); font-size: 16px; font-family: inherit;
-    -webkit-appearance: none; appearance: none;
-  }
-  input:focus { outline: none; border-color: var(--border2); }
-  .btn {
-    display: block; width: 100%; padding: 14px; border-radius: var(--radius);
-    font-size: 15px; font-weight: 600; cursor: pointer;
-    border: 0.5px solid var(--border2); background: var(--bg); color: var(--text);
-    font-family: inherit; -webkit-appearance: none;
-  }
-  .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
-  .btn-sm { padding: 9px 15px; font-size: 13px; width: auto; display: inline-block; }
-  .btn-danger { border-color: var(--danger); color: var(--danger); }
-  .player-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
-  .player-row input { flex: 1; }
-  .remove-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text2); padding: 4px; line-height: 1; }
-  .chip {
-    display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 99px;
-    font-size: 13px; background: var(--bg2); border: 0.5px solid var(--border); cursor: pointer;
-  }
-  .chip.selected { background: var(--text); color: var(--bg); border-color: var(--text); }
-  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-  .sec-title { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
-  .hole-nav {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px; background: var(--bg2); border-bottom: 0.5px solid var(--border);
-  }
-  .hole-num { font-size: 22px; font-weight: 700; }
-  .nav-btn {
-    background: none; border: 0.5px solid var(--border); border-radius: var(--radius);
-    padding: 8px 18px; font-size: 17px; cursor: pointer; color: var(--text); font-family: inherit;
-  }
-  .nav-btn:disabled { opacity: 0.3; cursor: default; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
-  .badge-banker { background: var(--warning-bg); color: var(--warning-text); }
-  .badge-par3 { background: var(--info-bg); color: var(--info-text); }
-  .banker-bar {
-    padding: 8px 16px; font-size: 13px; display: flex; align-items: center; gap: 8px;
-    flex-wrap: wrap; border-bottom: 0.5px solid var(--border); background: var(--bg2);
-  }
-  .player-card {
-    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
-    padding: 14px; margin-bottom: 10px; background: var(--bg);
-  }
-  .avatar {
-    width: 38px; height: 38px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 700; flex-shrink: 0;
-  }
-  .toggle-btn {
-    padding: 9px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 600;
-    border: 0.5px solid var(--border); background: var(--bg); cursor: pointer;
-    font-family: inherit; color: var(--text);
-  }
-  .toggle-btn.on { background: var(--text); color: var(--bg); border-color: var(--text); }
-  .toggle-btn:disabled { opacity: 0.35; cursor: default; }
-  .birdie-btn { border-color: #3B6D11; color: #3B6D11; }
-  .birdie-btn.on { background: #3B6D11; color: #fff; }
-  .eagle-btn { border-color: #185FA5; color: #185FA5; }
-  .eagle-btn.on { background: #185FA5; color: #fff; }
-  .warning-card {
-    border-radius: var(--radius-lg); padding: 14px; margin: 0 16px 12px;
-    border: 0.5px solid var(--warning-border); background: var(--warning-bg);
-  }
-  .info-card {
-    border-radius: var(--radius-lg); padding: 14px; margin: 0 16px 12px;
-    border: 0.5px solid var(--border); background: var(--bg2);
-  }
-  .divider { height: 0.5px; background: var(--border); margin: 12px 16px; }
-  .floating-bar {
-    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-    width: 100%; max-width: 480px;
-    background: var(--bg); border-top: 0.5px solid var(--border); padding: 12px 16px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
-    z-index: 20;
-  }
-  .tab-bar { display: flex; border-bottom: 0.5px solid var(--border); }
-  .tab { flex: 1; padding: 12px; text-align: center; font-size: 13px; cursor: pointer; color: var(--text2); border-bottom: 2px solid transparent; }
-  .tab.active { color: var(--text); font-weight: 600; border-bottom-color: var(--text); }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-  .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
-  .stat-row + .stat-row { border-top: 0.5px solid var(--border); }
-  .pos { color: var(--success); }
-  .neg { color: var(--danger); }
-  .empty { text-align: center; padding: 40px 20px; color: var(--text2); font-size: 14px; }
-  .round-item { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 0.5px solid var(--border); cursor: pointer; }
-  .banker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px,1fr)); gap: 8px; margin-bottom: 12px; }
-  .banker-opt { padding: 11px; border: 0.5px solid var(--border); border-radius: var(--radius); text-align: center; cursor: pointer; font-size: 14px; background: var(--bg); }
-  .banker-opt.sel { background: var(--text); color: var(--bg); border-color: var(--text); }
-  .mult-breakdown { font-size: 12px; color: var(--text2); margin-top: 4px; display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
-  .mult-tag { padding: 1px 7px; border-radius: 99px; font-size: 11px; font-weight: 600; border: 0.5px solid var(--border); background: var(--bg2); }
-  .mult-tag.press { border-color: var(--border2); }
-  .mult-tag.birdie { background: #EAF3DE; border-color: #3B6D11; color: #3B6D11; }
-  .mult-tag.eagle { background: #E6F1FB; border-color: #185FA5; color: #185FA5; }
-  .mult-tag.b-birdie { background: var(--warning-bg); border-color: var(--warning-border); color: var(--warning-text); }
-  .mult-tag.b-eagle { background: var(--warning-bg); border-color: var(--warning-border); color: var(--warning-text); }
-  .result-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; margin-top: 10px; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);min-height:100vh}
+  .app{max-width:480px;margin:0 auto;background:var(--bg);min-height:100vh;padding:0 0 90px}
+  .screen{display:none}.screen.active{display:block}
+  .header{padding:18px 16px 12px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--bg)}
+  .header h1{font-size:20px;font-weight:600}
+  .header-sub{font-size:13px;color:var(--text2)}
+  .back-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text2);padding:4px 8px 4px 0}
+  .section{padding:16px}.section+.section{border-top:0.5px solid var(--border)}
+  label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px}
+  input[type=text],input[type=number]{width:100%;padding:10px 12px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);font-size:16px;font-family:inherit;-webkit-appearance:none;appearance:none}
+  input:focus{outline:none;border-color:var(--border2)}
+  .btn{display:block;width:100%;padding:14px;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);font-family:inherit;-webkit-appearance:none}
+  .btn-primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .btn-sm{padding:9px 15px;font-size:13px;width:auto;display:inline-block}
+  .btn-danger{border-color:var(--danger);color:var(--danger)}
+  .player-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+  .player-row input{flex:1}
+  .remove-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text2);padding:4px;line-height:1}
+  .chip{display:inline-flex;align-items:center;padding:5px 11px;border-radius:99px;font-size:13px;background:var(--bg2);border:0.5px solid var(--border);cursor:pointer}
+  .chip.selected{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .sec-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
+  .mode-card{border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px;cursor:pointer;margin-bottom:10px;background:var(--bg)}
+  .mode-card.selected{border-color:var(--text);border-width:2px}
+  .mode-card-title{font-size:15px;font-weight:600;margin-bottom:3px}
+  .mode-card-desc{font-size:13px;color:var(--text2);line-height:1.5}
+  .hole-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg2);border-bottom:0.5px solid var(--border)}
+  .hole-num{font-size:22px;font-weight:700}
+  .nav-btn{background:none;border:0.5px solid var(--border);border-radius:var(--radius);padding:8px 18px;font-size:17px;cursor:pointer;color:var(--text);font-family:inherit}
+  .nav-btn:disabled{opacity:0.3;cursor:default}
+  .badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
+  .badge-banker{background:var(--warning-bg);color:var(--warning-text)}
+  .badge-par3{background:var(--info-bg);color:var(--info-text)}
+  .banker-bar{padding:8px 16px;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:0.5px solid var(--border);background:var(--bg2)}
+  .player-card{border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:10px;background:var(--bg)}
+  .avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+  .toggle-btn{padding:9px 14px;border-radius:var(--radius);font-size:13px;font-weight:600;border:0.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:inherit;color:var(--text)}
+  .toggle-btn.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .toggle-btn:disabled{opacity:0.35;cursor:default}
+  .birdie-btn{border-color:#3B6D11;color:#3B6D11}
+  .birdie-btn.on{background:#3B6D11;color:#fff}
+  .eagle-btn{border-color:#185FA5;color:#185FA5}
+  .eagle-btn.on{background:#185FA5;color:#fff}
+  .warning-card{border-radius:var(--radius-lg);padding:14px;margin:0 16px 12px;border:0.5px solid var(--warning-border);background:var(--warning-bg)}
+  .info-card{border-radius:var(--radius-lg);padding:14px;margin:0 16px 12px;border:0.5px solid var(--border);background:var(--bg2)}
+  .divider{height:0.5px;background:var(--border);margin:12px 16px}
+  .floating-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg);border-top:0.5px solid var(--border);padding:12px 16px;padding-bottom:max(12px,env(safe-area-inset-bottom));z-index:20}
+  .tab-bar{display:flex;border-bottom:0.5px solid var(--border)}
+  .tab{flex:1;padding:12px;text-align:center;font-size:13px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent}
+  .tab.active{color:var(--text);font-weight:600;border-bottom-color:var(--text)}
+  .tab-content{display:none}.tab-content.active{display:block}
+  .stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+  .stat-row+.stat-row{border-top:0.5px solid var(--border)}
+  .pos{color:var(--success)}.neg{color:var(--danger)}
+  .empty{text-align:center;padding:40px 20px;color:var(--text2);font-size:14px}
+  .round-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:0.5px solid var(--border);cursor:pointer}
+  .banker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:12px}
+  .banker-opt{padding:11px;border:0.5px solid var(--border);border-radius:var(--radius);text-align:center;cursor:pointer;font-size:14px;background:var(--bg)}
+  .banker-opt.sel{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .mult-breakdown{font-size:12px;color:var(--text2);margin-top:4px;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+  .mult-tag{padding:1px 7px;border-radius:99px;font-size:11px;font-weight:600;border:0.5px solid var(--border);background:var(--bg2)}
+  .mult-tag.press{border-color:var(--border2)}
+  .mult-tag.birdie{background:#EAF3DE;border-color:#3B6D11;color:#3B6D11}
+  .mult-tag.eagle{background:#E6F1FB;border-color:#185FA5;color:#185FA5}
+  .mult-tag.b-birdie{background:var(--warning-bg);border-color:var(--warning-border);color:var(--warning-text)}
+  .mult-tag.b-eagle{background:var(--warning-bg);border-color:var(--warning-border);color:var(--warning-text)}
+  .result-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;margin-top:10px}
+  .fixed-bet-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border)}
+  .fixed-bet-row:last-child{border-bottom:none}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- HOME -->
-  <div class="screen active" id="s-home">
-    <div class="header"><div><h1>⛳ Banker</h1><div class="header-sub">Golf game tracker</div></div></div>
-    <div class="section">
-      <button class="btn btn-primary" onclick="goSetup()" style="margin-bottom:10px">New round</button>
-      <div id="home-rounds"></div>
+<!-- HOME -->
+<div class="screen active" id="s-home">
+  <div class="header"><div><h1>⛳ Banker</h1><div class="header-sub">Golf game tracker</div></div></div>
+  <div class="section">
+    <button class="btn btn-primary" onclick="goSetup()" style="margin-bottom:10px">New round</button>
+    <div id="home-rounds"></div>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div class="screen" id="s-setup">
+  <div class="header">
+    <button class="back-btn" onclick="go('s-home');renderHome()">&#8592;</button>
+    <div><h1>New round</h1></div>
+  </div>
+  <div class="section">
+    <div class="sec-title">Round name (optional)</div>
+    <input type="text" id="inp-name" placeholder="e.g. Saturday at Memorial Park">
+  </div>
+  <div class="section">
+    <div class="sec-title">Players (3–5)</div>
+    <div id="player-list"></div>
+    <button class="btn btn-sm" id="add-btn" onclick="addPlayer()" style="margin-top:4px">+ Add player</button>
+  </div>
+  <div class="section">
+    <div class="sec-title">Bet mode</div>
+    <div class="mode-card selected" id="mode-fixed" onclick="selMode('fixed')">
+      <div class="mode-card-title">Fixed starting bet</div>
+      <div class="mode-card-desc">Everyone plays the same amount each hole (holes 1–15). Just press or no press. Holes 16–18 can be adjusted.</div>
+    </div>
+    <div class="mode-card" id="mode-manual" onclick="selMode('manual')">
+      <div class="mode-card-title">Manual bet per hole</div>
+      <div class="mode-card-desc">Each player sets their own bet amount every hole within the banker's min/max range.</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sec-title" id="bet-amt-label">Starting bet amount</div>
+    <div class="chips" id="min-chips">
+      <div class="chip selected" onclick="selMin(this,2)">$2</div>
+      <div class="chip" onclick="selMin(this,3)">$3</div>
+      <div class="chip" onclick="selMin(this,4)">$4</div>
+      <div class="chip" onclick="selMin(this,5)">$5</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sec-title">Scoring</div>
+    <div class="chips" id="scoring-chips">
+      <div class="chip selected" onclick="selScoring(this,'gross')">Gross</div>
+      <div class="chip" onclick="selScoring(this,'net')">Net</div>
+      <div class="chip" onclick="selScoring(this,'both')">Both</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="sec-title">Par 3 holes</div>
+    <div class="chips" id="par3-chips"></div>
+  </div>
+  <div class="section">
+    <button class="btn btn-primary" onclick="startRound()">Start round</button>
+    <div id="setup-err" style="color:var(--danger);font-size:13px;margin-top:8px;display:none"></div>
+  </div>
+</div>
+
+<!-- HOLE -->
+<div class="screen" id="s-hole">
+  <div class="hole-nav">
+    <button class="nav-btn" id="prev-btn" onclick="goHole(-1)">&#8592;</button>
+    <div style="text-align:center">
+      <div class="hole-num" id="h-label">Hole 1</div>
+      <div style="display:flex;gap:6px;justify-content:center;margin-top:3px">
+        <span class="badge" id="h-par" style="border:0.5px solid var(--border);color:var(--text2)">Par 4</span>
+        <span class="badge badge-par3" id="h-par3-badge" style="display:none">Par 3</span>
+      </div>
+    </div>
+    <button class="nav-btn" id="next-btn" onclick="goHole(1)">&#8594;</button>
+  </div>
+  <div class="banker-bar">
+    <span style="color:var(--text2)">Banker:</span>
+    <span style="font-weight:600" id="h-banker-name">—</span>
+    <span class="badge badge-banker" id="h-bet-badge" style="display:none"></span>
+  </div>
+
+  <!-- Banker select -->
+  <div id="sec-banker-sel" style="padding:14px 16px 4px;display:none">
+    <div class="sec-title">Select banker for this hole</div>
+    <div class="banker-grid" id="banker-grid"></div>
+  </div>
+
+  <!-- Max bet (manual mode only) -->
+  <div id="sec-maxbet" style="padding:0 16px 14px;display:none">
+    <div class="sec-title">Banker sets max bet</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:13px;color:var(--text2)">Min $<span id="h-min-lbl">2</span> · Max:</span>
+      <input type="number" id="inp-maxbet" style="width:90px" inputmode="numeric" oninput="setMaxBet()">
+      <span style="font-size:13px;color:var(--text2)">per player</span>
+    </div>
+    <div id="maxbet-err" style="font-size:12px;color:var(--danger);margin-top:4px;display:none"></div>
+  </div>
+
+  <!-- Override bet (fixed mode, holes 16-18) -->
+  <div id="sec-override" style="padding:0 16px 14px;display:none">
+    <div class="sec-title">Override starting bet (optional)</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:13px;color:var(--text2)">Bet amount:</span>
+      <input type="number" id="inp-override" style="width:90px" inputmode="numeric" oninput="setOverride()">
+      <span style="font-size:13px;color:var(--text2)">per player</span>
     </div>
   </div>
 
-  <!-- SETUP -->
-  <div class="screen" id="s-setup">
-    <div class="header">
-      <button class="back-btn" onclick="go('s-home');renderHome()">&#8592;</button>
-      <div><h1>New round</h1></div>
-    </div>
-    <div class="section">
-      <div class="sec-title">Round name (optional)</div>
-      <input type="text" id="inp-name" placeholder="e.g. Saturday at Memorial Park">
-    </div>
-    <div class="section">
-      <div class="sec-title">Players (3–5)</div>
-      <div id="player-list"></div>
-      <button class="btn btn-sm" id="add-btn" onclick="addPlayer()" style="margin-top:4px">+ Add player</button>
-    </div>
-    <div class="section">
-      <div class="sec-title">Scoring</div>
-      <div class="chips" id="scoring-chips">
-        <div class="chip selected" onclick="selScoring(this,'gross')">Gross</div>
-        <div class="chip" onclick="selScoring(this,'net')">Net</div>
-        <div class="chip" onclick="selScoring(this,'both')">Both</div>
-      </div>
-    </div>
-    <div class="section">
-      <div class="sec-title">Minimum bet per hole</div>
-      <div class="chips" id="min-chips">
-        <div class="chip selected" onclick="selMin(this,2)">$2</div>
-        <div class="chip" onclick="selMin(this,3)">$3</div>
-        <div class="chip" onclick="selMin(this,4)">$4</div>
-        <div class="chip" onclick="selMin(this,5)">$5</div>
-      </div>
-    </div>
-    <div class="section">
-      <div class="sec-title">Par 3 holes</div>
-      <div class="chips" id="par3-chips"></div>
-    </div>
-    <div class="section">
-      <button class="btn btn-primary" onclick="startRound()">Start round</button>
-      <div id="setup-err" style="color:var(--danger);font-size:13px;margin-top:8px;display:none"></div>
-    </div>
-  </div>
+  <!-- Player cards -->
+  <div id="sec-bets" style="padding:0 16px 4px"></div>
 
-  <!-- HOLE -->
-  <div class="screen" id="s-hole">
-    <div class="hole-nav">
-      <button class="nav-btn" id="prev-btn" onclick="goHole(-1)">&#8592;</button>
-      <div style="text-align:center">
-        <div class="hole-num" id="h-label">Hole 1</div>
-        <div style="display:flex;gap:6px;justify-content:center;margin-top:3px">
-          <span class="badge" id="h-par" style="border:0.5px solid var(--border);color:var(--text2)">Par 4</span>
-          <span class="badge badge-par3" id="h-par3-badge" style="display:none">Par 3</span>
-        </div>
-      </div>
-      <button class="nav-btn" id="next-btn" onclick="goHole(1)">&#8594;</button>
-    </div>
-    <div class="banker-bar">
-      <span style="color:var(--text2)">Banker:</span>
-      <span style="font-weight:600" id="h-banker-name">—</span>
-      <span class="badge badge-banker" id="h-maxbet" style="display:none"></span>
-    </div>
-    <div id="sec-banker-sel" style="padding:14px 16px 4px;display:none">
-      <div class="sec-title">Select banker for this hole</div>
-      <div class="banker-grid" id="banker-grid"></div>
-    </div>
-    <div id="sec-maxbet" style="padding:0 16px 14px;display:none">
-      <div class="sec-title">Banker sets max bet</div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:13px;color:var(--text2)">Min $<span id="h-min-lbl">2</span> · Max:</span>
-        <input type="number" id="inp-maxbet" style="width:90px" inputmode="numeric" oninput="setMaxBet()">
-        <span style="font-size:13px;color:var(--text2)">per player</span>
-      </div>
-      <div id="maxbet-err" style="font-size:12px;color:var(--danger);margin-top:4px;display:none"></div>
-    </div>
-    <div id="sec-bets" style="padding:0 16px 4px"></div>
-    <div id="sec-banker-press" style="display:none">
-      <div class="warning-card">
-        <div style="font-size:14px;font-weight:600;color:var(--warning-text);margin-bottom:4px" id="bp-title"></div>
-        <div style="font-size:13px;color:var(--warning-text);margin-bottom:10px" id="bp-note"></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-sm toggle-btn on" onclick="bankerPress(true)">Press all</button>
-          <button class="btn btn-sm toggle-btn" onclick="bankerPress(false)">Leave bets</button>
-        </div>
-      </div>
-    </div>
-    <div id="sec-banker-score" style="display:none">
-      <div class="info-card">
-        <div style="font-size:13px;font-weight:600;margin-bottom:4px" id="bsc-title"></div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Banker's result multiplies ALL player bets</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="toggle-btn birdie-btn" id="bsc-birdie" onclick="setBankerScore('birdie')">Birdie ×2</button>
-          <button class="toggle-btn eagle-btn" id="bsc-eagle" onclick="setBankerScore('eagle')">Eagle ×3</button>
-          <button class="toggle-btn on" id="bsc-par" onclick="setBankerScore('par')">Par / other</button>
-        </div>
-      </div>
-    </div>
-    <div id="sec-scores" style="display:none">
-      <div class="divider"></div>
-      <div style="padding:0 16px 8px">
-        <div class="sec-title">Scores</div>
-        <div id="score-inputs"></div>
-      </div>
-    </div>
-    <div class="floating-bar">
+  <!-- Banker press -->
+  <div id="sec-banker-press" style="display:none">
+    <div class="warning-card">
+      <div style="font-size:14px;font-weight:600;color:var(--warning-text);margin-bottom:4px" id="bp-title"></div>
+      <div style="font-size:13px;color:var(--warning-text);margin-bottom:10px" id="bp-note"></div>
       <div style="display:flex;gap:8px">
-        <button class="btn btn-primary" id="btn-complete" onclick="completeHole()" style="display:none;flex:1">Complete hole</button>
-        <button class="btn" onclick="go('s-totals');renderTotals()" style="flex:1">Totals</button>
+        <button class="btn btn-sm toggle-btn on" onclick="bankerPress(true)">Press all</button>
+        <button class="btn btn-sm toggle-btn" onclick="bankerPress(false)">Leave bets</button>
       </div>
     </div>
   </div>
 
-  <!-- TOTALS -->
-  <div class="screen" id="s-totals">
-    <div class="header">
-      <button class="back-btn" onclick="go('s-hole')">&#8592;</button>
-      <div><h1>Totals</h1><div class="header-sub" id="totals-sub"></div></div>
-    </div>
-    <div class="tab-bar">
-      <div class="tab active" onclick="switchTab('t-standings')">Standings</div>
-      <div class="tab" onclick="switchTab('t-history')">History</div>
-    </div>
-    <div class="tab-content active" id="t-standings"><div style="padding:16px" id="standings-body"></div></div>
-    <div class="tab-content" id="t-history"><div style="padding:16px" id="history-body"></div></div>
-    <div class="floating-bar">
-      <div style="display:flex;gap:8px">
-        <button class="btn" onclick="go('s-hole')" style="flex:1">Back to game</button>
-        <button class="btn btn-primary" onclick="go('s-settle');renderSettle()" style="flex:1">Settle up</button>
+  <!-- Banker score -->
+  <div id="sec-banker-score" style="display:none">
+    <div class="info-card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px" id="bsc-title"></div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Banker's result multiplies ALL player bets</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="toggle-btn birdie-btn" id="bsc-birdie" onclick="setBankerScore('birdie')">Birdie ×2</button>
+        <button class="toggle-btn eagle-btn" id="bsc-eagle" onclick="setBankerScore('eagle')">Eagle ×3</button>
+        <button class="toggle-btn on" id="bsc-par" onclick="setBankerScore('par')">Par / other</button>
       </div>
     </div>
   </div>
 
-  <!-- SETTLEMENT -->
-  <div class="screen" id="s-settle">
-    <div class="header">
-      <button class="back-btn" onclick="go('s-totals');renderTotals()">&#8592;</button>
-      <div><h1>Settlement</h1></div>
-    </div>
-    <div style="padding:16px" id="settle-body"></div>
-    <div class="floating-bar">
-      <div style="display:flex;gap:8px">
-        <button class="btn" onclick="go('s-hole')" style="flex:1">Back to game</button>
-        <button class="btn btn-primary" onclick="go('s-home');renderHome()" style="flex:1">New round</button>
-      </div>
+  <!-- Scores -->
+  <div id="sec-scores" style="display:none">
+    <div class="divider"></div>
+    <div style="padding:0 16px 8px">
+      <div class="sec-title">Scores</div>
+      <div id="score-inputs"></div>
     </div>
   </div>
+
+  <div class="floating-bar">
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" id="btn-complete" onclick="completeHole()" style="display:none;flex:1">Complete hole</button>
+      <button class="btn" onclick="go('s-totals');renderTotals()" style="flex:1">Totals</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOTALS -->
+<div class="screen" id="s-totals">
+  <div class="header">
+    <button class="back-btn" onclick="go('s-hole')">&#8592;</button>
+    <div><h1>Totals</h1><div class="header-sub" id="totals-sub"></div></div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab active" onclick="switchTab('t-standings')">Standings</div>
+    <div class="tab" onclick="switchTab('t-history')">History</div>
+  </div>
+  <div class="tab-content active" id="t-standings"><div style="padding:16px" id="standings-body"></div></div>
+  <div class="tab-content" id="t-history"><div style="padding:16px" id="history-body"></div></div>
+  <div class="floating-bar">
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="go('s-hole')" style="flex:1">Back to game</button>
+      <button class="btn btn-primary" onclick="go('s-settle');renderSettle()" style="flex:1">Settle up</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTLEMENT -->
+<div class="screen" id="s-settle">
+  <div class="header">
+    <button class="back-btn" onclick="go('s-totals');renderTotals()">&#8592;</button>
+    <div><h1>Settlement</h1></div>
+  </div>
+  <div style="padding:16px" id="settle-body"></div>
+  <div class="floating-bar">
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="go('s-hole')" style="flex:1">Back to game</button>
+      <button class="btn btn-primary" onclick="go('s-home');renderHome()" style="flex:1">New round</button>
+    </div>
+  </div>
+</div>
 
 </div>
 <script>
 const AV_BG=['#B5D4F4','#9FE1CB','#F5C4B3','#F4C0D1','#C0DD97','#FAC775'];
 const AV_TX=['#0C447C','#085041','#993C1D','#993556','#3B6D11','#854F0B'];
-const SKEY='banker_golf_v4';
+const SKEY='banker_golf_v5';
 let G={};
 
-// ── storage (localStorage) ────────────────────────────────
+// ── storage ───────────────────────────────────────────────
 function saveGame(){
   try{
     const all=loadAll();
@@ -325,7 +319,11 @@ function resumeRound(id){
 }
 
 // ── nav ───────────────────────────────────────────────────
-function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
 
 // ── home ──────────────────────────────────────────────────
 function renderHome(){
@@ -337,10 +335,11 @@ function renderHome(){
     rounds.map(r=>{
       const done=r.g.holes.filter(h=>h.done).length;
       const d=new Date(r.savedAt).toLocaleDateString();
+      const modeLabel=r.g.betMode==='fixed'?`Fixed $${r.g.minBet}`:'Manual bets';
       return `<div class="round-item" onclick="resumeRound('${r.id}')">
         <div style="flex:1">
           <div style="font-size:15px;font-weight:600">${r.name}</div>
-          <div style="font-size:12px;color:var(--text2)">${d} · ${r.g.players.map(p=>p.n).join(', ')} · ${done}/18 holes</div>
+          <div style="font-size:12px;color:var(--text2)">${d} · ${r.g.players.map(p=>p.n).join(', ')} · ${modeLabel} · ${done}/18 holes</div>
         </div>
         <button class="btn btn-sm btn-danger" onclick="delRound('${r.id}',event)">Delete</button>
       </div>`;
@@ -349,11 +348,21 @@ function renderHome(){
 
 // ── setup ─────────────────────────────────────────────────
 function goSetup(){
-  G={id:'r'+Date.now(),name:'',players:[{n:'',h:0},{n:'',h:0},{n:'',h:0},{n:'',h:0}],scoring:'gross',minBet:2,par3:[],holes:[],cur:0};
+  G={id:'r'+Date.now(),name:'',players:[{n:'',h:0},{n:'',h:0},{n:'',h:0},{n:'',h:0}],
+     betMode:'fixed',scoring:'gross',minBet:2,par3:[],holes:[],cur:0};
   document.getElementById('inp-name').value='';
   document.querySelectorAll('#scoring-chips .chip').forEach((c,i)=>c.classList.toggle('selected',i===0));
   document.querySelectorAll('#min-chips .chip').forEach((c,i)=>c.classList.toggle('selected',i===0));
+  document.getElementById('mode-fixed').classList.add('selected');
+  document.getElementById('mode-manual').classList.remove('selected');
+  document.getElementById('bet-amt-label').textContent='Starting bet amount';
   renderPlayerList();renderPar3Chips();go('s-setup');
+}
+function selMode(m){
+  G.betMode=m;
+  document.getElementById('mode-fixed').classList.toggle('selected',m==='fixed');
+  document.getElementById('mode-manual').classList.toggle('selected',m==='manual');
+  document.getElementById('bet-amt-label').textContent=m==='fixed'?'Starting bet amount':'Minimum bet per hole';
 }
 function renderPlayerList(){
   document.getElementById('player-list').innerHTML=G.players.map((p,i)=>`
@@ -372,6 +381,7 @@ function renderPar3Chips(){
     <div class="chip ${G.par3.includes(i+1)?'selected':''}" onclick="toggleP3(this,${i+1})">${i+1}</div>`).join('');
 }
 function toggleP3(el,n){const i=G.par3.indexOf(n);if(i>=0)G.par3.splice(i,1);else G.par3.push(n);el.classList.toggle('selected');}
+
 function startRound(){
   G.name=document.getElementById('inp-name').value.trim();
   const names=G.players.map(p=>p.n.trim()).filter(Boolean);
@@ -380,7 +390,12 @@ function startRound(){
   G.players=G.players.filter(p=>p.n.trim());
   G.holes=Array.from({length:18},(_,i)=>({
     n:i+1,par3:G.par3.includes(i+1),
-    banker:null,maxBet:null,bets:[],bankerScore:null,
+    banker:null,
+    // fixed mode: betAmt = fixed amount (overridable holes 16-18), no maxBet
+    // manual mode: maxBet set per hole
+    betAmt: G.betMode==='fixed'?G.minBet:null,
+    maxBet:null,
+    bets:[],bankerScore:null,
     scores:G.players.map(p=>({p:p.n,gross:null,net:null})),
     bankerActed:false,bankerScoreSet:false,done:false,results:null
   }));
@@ -392,38 +407,56 @@ function showErr(msg){const e=document.getElementById('setup-err');e.textContent
 function H(){return G.holes[G.cur];}
 function p3(){return H().par3;}
 function pressX(){return p3()?3:2;}
+function isFixed(){return G.betMode==='fixed';}
 function initials(name){return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
 function avIdx(name){return G.players.findIndex(p=>p.n===name);}
 function scoreMult(s){return s==='eagle'?3:s==='birdie'?2:1;}
 
+// In fixed mode, betAmt is the base. In manual mode, each bet.base is set individually.
+function getBase(bet){
+  return isFixed()?H().betAmt:(bet?bet.base:null);
+}
 function finalAmt(bet){
-  if(!bet||!bet.base)return 0;
-  const h=H();
+  if(!bet)return 0;
+  const base=getBase(bet);
+  if(!base)return 0;
   let m=1;
   if(bet.playerPressed)m*=pressX();
   if(bet.bankerPressed)m*=pressX();
   m*=scoreMult(bet.playerScore);
-  m*=scoreMult(h.bankerScore);
-  return bet.base*m;
+  m*=scoreMult(H().bankerScore);
+  return base*m;
 }
 function buildMultTags(bet){
-  const h=H();const tags=[];
+  const tags=[];
   if(bet.playerPressed)tags.push(`<span class="mult-tag press">Press ×${pressX()}</span>`);
   if(bet.bankerPressed)tags.push(`<span class="mult-tag press">Banker press ×${pressX()}</span>`);
   if(bet.playerScore==='birdie')tags.push(`<span class="mult-tag birdie">Birdie ×2</span>`);
   if(bet.playerScore==='eagle')tags.push(`<span class="mult-tag eagle">Eagle ×3</span>`);
-  if(h.bankerScore==='birdie')tags.push(`<span class="mult-tag b-birdie">Banker birdie ×2</span>`);
-  if(h.bankerScore==='eagle')tags.push(`<span class="mult-tag b-eagle">Banker eagle ×3</span>`);
+  if(H().bankerScore==='birdie')tags.push(`<span class="mult-tag b-birdie">Banker birdie ×2</span>`);
+  if(H().bankerScore==='eagle')tags.push(`<span class="mult-tag b-eagle">Banker eagle ×3</span>`);
   return tags;
+}
+
+// Is the hole "ready" to show player cards?
+function holeReady(){
+  const h=H();
+  if(!h.banker)return false;
+  if(isFixed())return h.betAmt>0;
+  return h.maxBet>0;
 }
 
 // ── hole render ───────────────────────────────────────────
 function renderHole(){
   const h=H();
-  // If banker was auto-set from previous hole but bets not yet initialized
-  if(h.banker && h.bets.length===0){
-    h.bets=G.players.filter(p=>p.n!==h.banker).map(p=>({player:p.n,base:null,playerPressed:false,bankerPressed:false,playerScore:null}));
+  // Init bets if banker is set but bets array is empty
+  if(h.banker&&h.bets.length===0){
+    h.bets=G.players.filter(p=>p.n!==h.banker).map(p=>({
+      player:p.n,base:isFixed()?h.betAmt:null,
+      playerPressed:false,bankerPressed:false,playerScore:null
+    }));
   }
+
   document.getElementById('h-label').textContent=`Hole ${h.n}`;
   document.getElementById('h-par').textContent=`Par ${p3()?3:4}`;
   document.getElementById('h-par3-badge').style.display=p3()?'inline-block':'none';
@@ -431,28 +464,62 @@ function renderHole(){
   document.getElementById('next-btn').disabled=G.cur===17;
   document.getElementById('h-min-lbl').textContent=G.minBet;
   document.getElementById('h-banker-name').textContent=h.banker||'—';
-  document.getElementById('h-maxbet').style.display=h.maxBet?'inline-block':'none';
-  if(h.maxBet)document.getElementById('h-maxbet').textContent=`max $${h.maxBet}`;
+
+  // Bet badge in banker bar
+  const betBadge=document.getElementById('h-bet-badge');
+  if(isFixed()&&h.betAmt){
+    betBadge.textContent=`$${h.betAmt} per player`;betBadge.style.display='inline-block';
+  } else if(!isFixed()&&h.maxBet){
+    betBadge.textContent=`max $${h.maxBet}`;betBadge.style.display='inline-block';
+  } else {
+    betBadge.style.display='none';
+  }
+
+  // Section visibility
   document.getElementById('sec-banker-sel').style.display=h.banker?'none':'block';
-  document.getElementById('sec-maxbet').style.display=(h.banker&&!h.done)?'block':'none';
-  if(h.maxBet)document.getElementById('inp-maxbet').value=h.maxBet;
-  else document.getElementById('inp-maxbet').value='';
+
+  // Manual mode: show max bet input (not done, banker selected)
+  document.getElementById('sec-maxbet').style.display=(!isFixed()&&h.banker&&!h.done)?'block':'none';
+  if(!isFixed()&&h.maxBet)document.getElementById('inp-maxbet').value=h.maxBet;
+  else if(!isFixed())document.getElementById('inp-maxbet').value='';
+
+  // Fixed mode, holes 16-18: show override
+  document.getElementById('sec-override').style.display=(isFixed()&&h.n>=16&&!h.done&&h.banker)?'block':'none';
+  if(isFixed()&&h.n>=16)document.getElementById('inp-override').value=h.betAmt||G.minBet;
+
   if(!h.banker)renderBankerGrid();
-  renderBetCards();renderBankerPressSection();renderBankerScoreSection();renderScoreSection();updateCompleteBtn();
+  renderBetCards();
+  renderBankerPressSection();
+  renderBankerScoreSection();
+  renderScoreSection();
+  updateCompleteBtn();
 }
+
 function renderBankerGrid(){
   document.getElementById('banker-grid').innerHTML=G.players.map(p=>`
     <div class="banker-opt ${H().banker===p.n?'sel':''}" onclick="selectBanker('${p.n}')">${p.n}</div>`).join('');
 }
+
 function selectBanker(name){
-  const h=H();h.banker=name;h.maxBet=null;h.bankerActed=false;h.bankerScoreSet=false;h.bankerScore=null;
-  h.bets=G.players.filter(p=>p.n!==name).map(p=>({player:p.n,base:null,playerPressed:false,bankerPressed:false,playerScore:null}));
-  document.getElementById('inp-maxbet').value='';
+  const h=H();
+  h.banker=name;
+  h.maxBet=null;h.bankerActed=false;h.bankerScoreSet=false;h.bankerScore=null;
+  if(isFixed()){
+    // betAmt already set on hole init; just init bets
+    h.bets=G.players.filter(p=>p.n!==name).map(p=>({
+      player:p.n,base:h.betAmt,playerPressed:false,bankerPressed:false,playerScore:null
+    }));
+  } else {
+    h.bets=G.players.filter(p=>p.n!==name).map(p=>({
+      player:p.n,base:null,playerPressed:false,bankerPressed:false,playerScore:null
+    }));
+    document.getElementById('inp-maxbet').value='';
+  }
   document.getElementById('sec-banker-sel').style.display='none';
-  document.getElementById('sec-maxbet').style.display='block';
   document.getElementById('h-banker-name').textContent=name;
-  renderBankerGrid();renderBetCards();renderBankerPressSection();renderBankerScoreSection();updateCompleteBtn();
+  renderBankerGrid();renderHole();
 }
+
 function setMaxBet(){
   const val=parseInt(document.getElementById('inp-maxbet').value);
   const err=document.getElementById('maxbet-err');
@@ -460,47 +527,68 @@ function setMaxBet(){
   err.style.display='none';
   const h=H();h.maxBet=val;h.bankerActed=false;h.bankerScoreSet=false;h.bankerScore=null;
   h.bets.forEach(b=>{b.base=null;b.playerPressed=false;b.bankerPressed=false;b.playerScore=null;});
-  document.getElementById('h-maxbet').textContent=`max $${val}`;
-  document.getElementById('h-maxbet').style.display='inline-block';
   renderBetCards();renderBankerPressSection();renderBankerScoreSection();updateCompleteBtn();
 }
+
+function setOverride(){
+  const val=parseInt(document.getElementById('inp-override').value);
+  if(!val||val<1)return;
+  const h=H();
+  h.betAmt=val;
+  // update all bets base
+  h.bets.forEach(b=>{b.base=val;});
+  renderBetCards();updateCompleteBtn();
+}
+
+// ── bet cards ─────────────────────────────────────────────
 function renderBetCards(){
   const h=H();
   const wrap=document.getElementById('sec-bets');
-  if(!h.banker||!h.maxBet){wrap.innerHTML='';return;}
+  if(!holeReady()){wrap.innerHTML='';return;}
+
   const nonBankers=G.players.filter(p=>p.n!==h.banker);
+  const pressLocked=h.bankerActed||h.done;
+  const scoreLocked=!h.bankerActed||h.done;
+
   wrap.innerHTML=nonBankers.map(p=>{
     const bet=h.bets.find(b=>b.player===p.n);
+    if(!bet)return '';
     const ai=avIdx(p.n);
+    const base=getBase(bet);
     const amt=finalAmt(bet);
-    const tags=bet.base?buildMultTags(bet):[];
-    const totalMult=bet.base?Math.round(amt/bet.base):1;
-    const pressLocked=h.bankerActed||h.done;
-    const scoreLocked=!h.bankerActed||h.done;
+    const tags=base?buildMultTags(bet):[];
+    const totalMult=base&&amt?Math.round(amt/base):1;
+
     return `<div class="player-card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:${base?'6':'10'}px">
         <div class="avatar" style="background:${AV_BG[ai]};color:${AV_TX[ai]}">${initials(p.n)}</div>
         <div style="flex:1">
           <div style="font-size:15px;font-weight:600">${p.n}</div>
-          ${bet.base
+          ${base
             ?`<div style="font-size:20px;font-weight:700;margin-top:1px">$${amt.toFixed(0)}${totalMult>1?` <span style="font-size:13px;font-weight:400;color:var(--text2)">×${totalMult} total</span>`:''}</div>
               ${tags.length?`<div class="mult-breakdown">${tags.join('')}</div>`:''}`
             :`<div style="font-size:13px;color:var(--text2)">Set bet amount</div>`}
         </div>
       </div>
-      ${!bet.base&&!h.done?`
-        <div style="display:flex;gap:8px;align-items:center">
+
+      ${/* Manual mode: bet input */''}
+      ${!isFixed()&&!bet.base&&!h.done?`
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
           <input type="number" placeholder="${G.minBet}" min="${G.minBet}" max="${h.maxBet}" inputmode="numeric"
             style="width:90px;text-align:center" oninput="G.holes[G.cur].bets.find(b=>b.player==='${p.n}').base=parseInt(this.value)||null">
           <button class="btn btn-sm" onclick="confirmBet('${p.n}')">Set</button>
         </div>`:''}
-      ${bet.base&&!pressLocked?`
-        <div style="margin-top:8px">
+
+      ${/* Press button */''}
+      ${base&&!pressLocked?`
+        <div style="margin-top:6px">
           <button class="toggle-btn ${bet.playerPressed?'on':''}" onclick="togglePlayerPress('${p.n}')">
             ${bet.playerPressed?`Pressed ×${pressX()}`:`Press ×${pressX()}`}
           </button>
         </div>`:''}
-      ${bet.base&&!scoreLocked?`
+
+      ${/* Result buttons (after banker acted) */''}
+      ${base&&!scoreLocked?`
         <div>
           <div class="result-label">Result</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -512,6 +600,7 @@ function renderBetCards(){
     </div>`;
   }).join('');
 }
+
 function confirmBet(pname){
   const h=H();const bet=h.bets.find(b=>b.player===pname);
   if(!bet.base||bet.base<G.minBet||bet.base>h.maxBet){alert(`Bet must be $${G.minBet}–$${h.maxBet}`);return;}
@@ -527,12 +616,19 @@ function setPlayerScore(pname,score){
   H().bets.find(b=>b.player===pname).playerScore=score==='par'?null:score;
   renderBetCards();updateCompleteBtn();
 }
+
+// ── banker press ──────────────────────────────────────────
+function allBetsReady(){
+  const h=H();
+  if(!holeReady())return false;
+  if(isFixed())return h.bets.length>0; // fixed mode: bets always ready once banker selected
+  return h.bets.every(b=>b.base);      // manual mode: all must be confirmed
+}
 function renderBankerPressSection(){
   const h=H();const sec=document.getElementById('sec-banker-press');
-  if(h.done||h.bankerActed||!h.banker||!h.maxBet){sec.style.display='none';return;}
-  const allSet=h.bets.every(b=>b.base);
-  sec.style.display=allSet?'block':'none';
-  if(!allSet)return;
+  if(h.done||h.bankerActed||!h.banker){sec.style.display='none';return;}
+  sec.style.display=allBetsReady()?'block':'none';
+  if(!allBetsReady())return;
   document.getElementById('bp-title').textContent=`${h.banker}: press everyone?`;
   document.getElementById('bp-note').textContent=p3()
     ?`Par 3 — each press triples (×3) the bet. Must press everyone or no one.`
@@ -543,9 +639,11 @@ function bankerPress(yes){
   if(yes)h.bets.forEach(b=>b.bankerPressed=true);
   renderBetCards();renderBankerPressSection();renderBankerScoreSection();renderScoreSection();updateCompleteBtn();saveGame();
 }
+
+// ── banker score ──────────────────────────────────────────
 function renderBankerScoreSection(){
   const h=H();const sec=document.getElementById('sec-banker-score');
-  const show=h.banker&&h.maxBet&&h.bankerActed&&!h.done&&h.bets.every(b=>b.base);
+  const show=holeReady()&&h.bankerActed&&!h.done;
   sec.style.display=show?'block':'none';
   if(!show)return;
   document.getElementById('bsc-title').textContent=`${h.banker}'s result`;
@@ -558,10 +656,11 @@ function setBankerScore(score){
   const h=H();h.bankerScore=score==='par'?null:score;h.bankerScoreSet=true;
   renderBetCards();renderBankerScoreSection();renderScoreSection();updateCompleteBtn();
 }
+
+// ── scores ────────────────────────────────────────────────
 function renderScoreSection(){
   const h=H();
-  const allSet=h.bets.every(b=>b.base);
-  const show=h.banker&&h.maxBet&&allSet&&h.bankerActed&&h.bankerScoreSet&&!h.done;
+  const show=holeReady()&&h.bankerActed&&h.bankerScoreSet&&!h.done;
   document.getElementById('sec-scores').style.display=show?'block':'none';
   if(!show)return;
   const showNet=G.scoring!=='gross';
@@ -584,14 +683,16 @@ function renderScoreSection(){
     </div>`;
   }).join('');
 }
+
 function updateCompleteBtn(){
   const h=H();const btn=document.getElementById('btn-complete');
   if(h.done){btn.style.display='none';return;}
-  const allBets=h.bets.every(b=>b.base);
   const sf=G.scoring==='net'?'net':'gross';
   const allScores=G.players.every(p=>{const s=h.scores.find(sc=>sc.p===p.n);return s&&s[sf]!==null;});
-  btn.style.display=(h.banker&&h.maxBet&&allBets&&h.bankerActed&&h.bankerScoreSet&&allScores)?'block':'none';
+  const ready=holeReady()&&allBetsReady()&&h.bankerActed&&h.bankerScoreSet&&allScores;
+  btn.style.display=ready?'block':'none';
 }
+
 function completeHole(){
   const h=H();const sf=G.scoring==='net'?'net':'gross';
   const bScore=h.scores.find(s=>s.p===h.banker)[sf];
@@ -604,13 +705,24 @@ function completeHole(){
   h.done=true;
   if(G.cur<17){
     const scores=G.players.map(p=>({n:p.n,s:h.scores.find(sc=>sc.p===p.n)[sf]})).filter(x=>x.s!==null);
-    if(scores.length){const mn=Math.min(...scores.map(x=>x.s));const lows=scores.filter(x=>x.s===mn);if(lows.length===1)G.holes[G.cur+1].banker=lows[0].n;}
+    if(scores.length){
+      const mn=Math.min(...scores.map(x=>x.s));
+      const lows=scores.filter(x=>x.s===mn);
+      if(lows.length===1){
+        G.holes[G.cur+1].banker=lows[0].n;
+        // For fixed mode, carry betAmt forward (preserve any override already set)
+        if(isFixed()&&!G.holes[G.cur+1].betAmt){
+          G.holes[G.cur+1].betAmt=G.minBet;
+        }
+      }
+    }
   }
   document.getElementById('btn-complete').style.display='none';
   renderHole();saveGame();
   const summary=h.results.map(r=>r.wins===null?`${r.player} & ${r.banker} tied — push`:r.wins?`${r.player} wins $${r.amount.toFixed(0)}`:`${r.banker} wins $${r.amount.toFixed(0)} from ${r.player}`).join('\n');
   alert(`Hole ${h.n} complete!\n\n${summary}`);
 }
+
 function goHole(d){G.cur=Math.max(0,Math.min(17,G.cur+d));renderHole();}
 
 // ── totals ────────────────────────────────────────────────
@@ -640,7 +752,7 @@ function renderTotals(){
   document.getElementById('history-body').innerHTML=done.map(h=>`
     <div style="margin-bottom:16px">
       <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">
-        Hole ${h.n} ${h.par3?'<span class="badge badge-par3">Par 3</span>':''} · Banker: <strong>${h.banker}</strong>
+        Hole ${h.n} ${h.par3?'<span class="badge badge-par3">Par 3</span>':''} · Banker: <strong>${h.banker}</strong>${isFixed()?` · $${h.betAmt}`:''}
       </div>
       ${h.results.map(r=>{
         const w=r.wins===true,t=r.wins===null;
@@ -660,6 +772,8 @@ function switchTab(id){
   document.querySelectorAll('.tab-content').forEach(tc=>tc.classList.toggle('active',tc.id===id));
   renderTotals();
 }
+
+// ── settlement ────────────────────────────────────────────
 function renderSettle(){
   const net=calcNet();
   let debs=G.players.filter(p=>net[p.n]<0).map(p=>({n:p.n,ow:-net[p.n]}));
