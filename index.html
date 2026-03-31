@@ -95,6 +95,7 @@
   .mult-tag.b-birdie{background:var(--warning-bg);border-color:var(--warning-border);color:var(--warning-text)}
   .mult-tag.b-eagle{background:var(--warning-bg);border-color:var(--warning-border);color:var(--warning-text)}
   .result-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;margin-top:10px}
+  .edit-banner{background:var(--warning-bg);border-bottom:0.5px solid var(--warning-border);padding:10px 16px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--warning-text)}
   .fixed-bet-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border)}
   .fixed-bet-row:last-child{border-bottom:none}
 </style>
@@ -183,6 +184,14 @@
     <span class="badge badge-banker" id="h-bet-badge" style="display:none"></span>
   </div>
 
+  <!-- Edit mode banner -->
+  <div id="sec-edit-banner" style="display:none">
+    <div class="edit-banner">
+      <span style="flex:1;font-weight:600">Editing hole — make changes then re-complete</span>
+      <button class="btn btn-sm" onclick="cancelEdit()" style="border-color:var(--warning-border);color:var(--warning-text)">Cancel</button>
+    </div>
+  </div>
+
   <!-- Banker select -->
   <div id="sec-banker-sel" style="padding:14px 16px 4px;display:none">
     <div class="sec-title">Select banker for this hole</div>
@@ -250,6 +259,7 @@
   <div class="floating-bar">
     <div style="display:flex;gap:8px">
       <button class="btn btn-primary" id="btn-complete" onclick="completeHole()" style="display:none;flex:1">Complete hole</button>
+      <button class="btn btn-danger btn-sm" id="btn-edit" onclick="unlockHole()" style="display:none">Edit hole</button>
       <button class="btn" onclick="go('s-totals');renderTotals()" style="flex:1">Totals</button>
     </div>
   </div>
@@ -685,14 +695,49 @@ function renderScoreSection(){
 }
 
 function updateCompleteBtn(){
-  const h=H();const btn=document.getElementById('btn-complete');
-  if(h.done){btn.style.display='none';return;}
+  const h=H();
+  const btn=document.getElementById('btn-complete');
+  const editBtn=document.getElementById('btn-edit');
+  const editBanner=document.getElementById('sec-edit-banner');
+  if(h.done){
+    btn.style.display='none';
+    editBtn.style.display='block';
+    editBanner.style.display='none';
+    return;
+  }
+  editBtn.style.display='none';
+  editBanner.style.display=h._editing?'block':'none';
   const sf=G.scoring==='net'?'net':'gross';
   const allScores=G.players.every(p=>{const s=h.scores.find(sc=>sc.p===p.n);return s&&s[sf]!==null;});
   const ready=holeReady()&&allBetsReady()&&h.bankerActed&&h.bankerScoreSet&&allScores;
   btn.style.display=ready?'block':'none';
 }
 
+function unlockHole(){
+  if(!confirm("Edit this hole? All values can be changed and you need to re-complete it."))return;
+  const h=H();
+  h.done=false;
+  h.bankerActed=false;
+  h.bankerScoreSet=false;
+  h.bankerScore=null;
+  h.results=null;
+  h.bets.forEach(b=>{b.bankerPressed=false;b.playerScore=null;});
+  h.scores.forEach(s=>{s.gross=null;s.net=null;});
+  h._editing=true;
+  renderHole();
+}
+function cancelEdit(){
+  const h=H();
+  // Re-lock without saving — restore from localStorage if available
+  const all=loadAll();
+  if(all[G.id]){
+    const saved=all[G.id].g.holes[G.cur];
+    if(saved&&saved.done){
+      G.holes[G.cur]=JSON.parse(JSON.stringify(saved));
+    }
+  }
+  renderHole();
+}
 function completeHole(){
   const h=H();const sf=G.scoring==='net'?'net':'gross';
   const bScore=h.scores.find(s=>s.p===h.banker)[sf];
@@ -703,6 +748,7 @@ function completeHole(){
     return{player:b.player,banker:h.banker,amount:amt,wins,pScore:ps,bScore,playerScore:b.playerScore,bankerScore:h.bankerScore};
   });
   h.done=true;
+  h._editing=false;
   if(G.cur<17){
     const scores=G.players.map(p=>({n:p.n,s:h.scores.find(sc=>sc.p===p.n)[sf]})).filter(x=>x.s!==null);
     if(scores.length){
